@@ -1,9 +1,7 @@
-FROM python
+FROM node:16
 WORKDIR /frontend
-ENV FLASK_APP=frontend.py
-ENV FLASK_RUN_HOST=0.0.0.0
-COPY requirements.txt requirements.txt
-RUN pip install -r requirements.txt
-EXPOSE 5000
-COPY frontend.py frontend.py
-CMD ["flask","run"]
+COPY ./frontend/package*.json ./
+RUN npm install
+COPY ./frontend .
+EXPOSE 3000
+CMD ["node","frontend.js"]
