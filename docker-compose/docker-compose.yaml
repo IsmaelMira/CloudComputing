@@ -16,7 +16,7 @@ services:
       context: .
       dockerfile: dockerfile_frontend
     ports: 
-    - "49160:3000"
+    - "80:3000"
   worker:
     build:
       context: .

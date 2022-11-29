@@ -1,7 +1,6 @@
 FROM node:16
 WORKDIR /frontend
-COPY ./frontend/package*.json ./
+COPY ./frontend ./
 RUN npm install
-COPY ./frontend .
 EXPOSE 3000
 CMD ["node","frontend.js"]
