@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "kafkajs": "^2.2.3",
+    "minio": "^7.0.32",
+    "shelljs": "^0.8.5"
+  }
+}
