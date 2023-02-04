@@ -1,0 +1,6 @@
+FROM node:16
+WORKDIR /injector
+COPY ./injector/package*.json ./
+COPY ./injector/injector.js ./
+RUN npm install
+CMD ["node","injector.js"]

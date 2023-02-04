@@ -1,0 +1,33 @@
+{
+    "domain": "isma_blanca",
+    "component": {
+        "template": " @kumori/workspace:component-javascript"
+    },
+    "deployment": {
+        "template": "@kumori/workspace:deployment-basic"
+    },
+    "project": {
+        "template": "@kumori/workspace:project-hello-world"
+    },
+    "resource": {
+        "template": "@kumori/workspace:resource-vhost"
+    },
+    "runtime": {
+        "template": "@kumori/workspace:runtime-basic",
+        "parent": "eslap://eslap.cloud/runtime/native/2_0_0",
+        "folder": "/eslap/component",
+        "entrypoint": "/eslap/runtime-agent/scripts/start-runtime-agent.sh"
+    },
+    "service": {
+        "template": "@kumori/workspace:service-basic"
+    },
+    "stamps": {
+        "localstamp": {
+            "admission": "http://localhost:8090"
+        },
+        "baco": {
+            "admission": "https://admission.baco.kumori.cloud"
+        }
+    },
+    "working-stamp": "baco"
+}

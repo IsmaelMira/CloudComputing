@@ -1,2 +1,6 @@
-FROM python
-
+FROM node:16
+WORKDIR /worker
+COPY ./worker/package*.json ./
+COPY ./worker/worker.js ./
+RUN npm install
+CMD ["node","worker.js"]

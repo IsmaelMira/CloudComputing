@@ -1,0 +1,7 @@
+FROM node:16
+WORKDIR /observer
+COPY ./observer/package*.json ./
+COPY ./observer/observer.js ./
+RUN npm install
+CMD ["node","observer.js"]
+

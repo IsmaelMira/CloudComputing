@@ -1,0 +1,37 @@
+version: '3'
+
+volumes:
+  keycloak_database:
+
+services:
+  database:
+    image: postgres:15
+    user: postgres
+    environment:
+      POSTGRES_DB: keycloak_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    expose:
+      - '5432'
+    volumes:
+      - keycloak_database:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-d", "keycloak_db"]
+    restart: 'unless-stopped'
+  
+  keycloak:
+    image: bitnami/keycloak
+    environment:
+      KEYCLOAK_HTTP_PORT: 8080
+      KEYCLOAK_DATABASE_HOST: database
+      KEYCLOAK_DATABASE_PORT: 5432
+      KEYCLOAK_DATABASE_NAME: keycloak_db
+      KEYCLOAK_DATABASE_USER: postgres
+      KEYCLOAK_DATABASE_PASSWORD: postgres
+      KEYCLOAK_ADMIN_USER: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    ports:
+      - '8082:8080'
+    depends_on: 
+      - database
+    restart: 'unless-stopped'

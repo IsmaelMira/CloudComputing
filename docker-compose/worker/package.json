@@ -2,6 +2,7 @@
   "dependencies": {
     "kafkajs": "^2.2.3",
     "minio": "^7.0.32",
+    "pg": "^8.9.0",
     "shelljs": "^0.8.5"
   }
 }

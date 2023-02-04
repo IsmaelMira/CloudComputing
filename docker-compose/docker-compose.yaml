@@ -1,23 +1,90 @@
-version: "3"
+version: "2.1"
+
+volumes:
+    databaseResults:
+
 services:
   zookeeper:
     image: ubuntu/zookeeper
-    ports: 
-    - "2181:2181"
+    expose: 
+    - "2181"
+    restart: "unless-stopped"
+
   kafka:
     image: ubuntu/kafka
-    ports:
-    - "9092:9092"
+    expose:
+    - "9092"
+    depends_on:
+    - zookeeper
     environment:
-      ZOOKEEPER_HOST: 172.17.0.1
+      ZOOKEEPER_HOST: zookeeper
       ZOOKEEPER_PORT: 2181
+    healthcheck:
+      test: ["CMD", "kafka-topics.sh", "--list", "--bootstrap-server", "localhost:9092"]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+    restart: "unless-stopped"
+
+  database:
+    image: postgres:15
+    user: postgres
+    environment:
+      POSTGRES_DB: results_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    expose:
+    - '5432'
+    volumes:
+    - databaseResults:/var/lib/postgresql/data
+    - ./sql/create_tables.sql:/docker-entrypoint-initdb.d/create_tables.sql
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "${POSTGRES_USER}"]
+    restart: 'unless-stopped'
+
   frontend:
     build:
       context: .
       dockerfile: dockerfile_frontend
+    depends_on:
+      kafka:
+        condition: service_healthy
     ports: 
     - "80:3000"
+    environment:
+      KAFKA_BOOTSTRAP: "kafka:9092"
+      POSTGRES_HOST: database
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: results_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    healthcheck:
+      test: ["CMD", "curl", "localhost:3000/healthcheck"]
+    restart: "unless-stopped"
+
   worker:
     build:
       context: .
       dockerfile: dockerfile_worker
+    depends_on:
+      kafka:
+        condition: service_healthy
+    environment:
+      KAFKA_BOOTSTRAP: "kafka:9092"
+      POSTGRES_HOST: database
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: results_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    restart: "unless-stopped"
+
+  observer:
+    build:
+      context: .
+      dockerfile: dockerfile_observer
+    depends_on:
+      - frontend
+      - worker
+    environment:
+      KAFKA_BOOTSTRAP: "kafka:9092"
+    restart: "unless-stopped"    

@@ -1,0 +1,38 @@
+{
+  "name": "frontend",
+  "version": "1.0.0",
+  "description": "frontend component",
+  "main": "lib/index.js",
+  "scripts": {
+    "dist": "taskr dist",
+    "lint": "taskr lint",
+    "prespec": "npm run lint",
+    "test": "taskr test",
+    "clean": "taskr clean",
+    "superclean": "taskr superclean",
+    "devinit": "npm install"
+  },
+  "author": "Kumori Systems (info@kumori.systems)",
+  "license": "MIT",
+  "devDependencies": {
+    "@taskr/clear": "^1.1.0",
+    "@taskr/jest": "^1.1.1",
+    "@taskr/shell": "^1.1.0",
+    "jest": "^23.5.0",
+    "jslint": "0.12.0",
+    "lint": "^1.1.2",
+    "taskr": "^1.1.0"
+  },
+  "dependencies": {
+    "@kumori/component": "1.0.2",
+    "@kumori/http-message": "1.0.0",
+    "express": "^4.16.2"
+  },
+  "engines": {
+    "node": ">=4.2.1"
+  },
+  "os": [
+    "linux",
+    "darwin"
+  ]
+}
