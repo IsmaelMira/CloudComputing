@@ -11,6 +11,7 @@ const topicJobs = "trabajos"
 const topicResults = "resultados"
 const kafka = new Kafka({clientId, brokers})
 
+//PostgreSQL
 const connectToDatabase = async() => {
   const { Client } = require('pg')
   const connectionData = {
@@ -45,6 +46,10 @@ const express = require('express')
 const app = express()
 const port = 3000
 
+//Keycloak config file
+const keycloak = require('./config/keycloak-config.js').initKeycloak();
+app.use(keycloak.middleware());
+
 //Uuid (generates unique ids for requests)
 const { v4:uuidv4 } = require('uuid')
 
@@ -58,7 +63,7 @@ try {
 }
 
 //GET Produce messages on jobs queue on request
-app.get('/add', async (req, res) => {
+app.get('/add', keycloak.protect('user'), async (req, res) => {
   try{
     const url_github = req.query.url
     key = uuidv4() //Generate unique key
@@ -79,7 +84,7 @@ app.get('/add', async (req, res) => {
 })
 
 //GET Show all jobs for user
-app.get('/all', async (req, res) => {
+app.get('/all', keycloak.protect('user'), async (req, res) => {
   
   //Buscar en base de datos todos los trabajos del usuario
   var query = "SELECT * FROM resultados"
@@ -95,7 +100,7 @@ app.get('/all', async (req, res) => {
 })
 
 //GET Show status of job for user with key
-app.get('/status', async (req, res) => {
+app.get('/status', keycloak.protect('user'), async (req, res) => {
   
   //Buscar en base de datos el status de un trabajo
   var query = "SELECT * FROM resultados WHERE key='" + req.query.key + "';"
@@ -111,7 +116,7 @@ app.get('/status', async (req, res) => {
 })
 
 //GET Healthcheck on request
-app.get('/healthcheck', async (req, res) => {
+app.get('/healthcheck', keycloak.protect('admin'), async (req, res) => {
   res.send("OK")
 })
 

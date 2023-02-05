@@ -48,7 +48,8 @@ try {
 }
 
 const executeURL = async (url) => {
-  //shell.exec('git clone https://github.com/atomicptr/dauntless-builder')
+  shell.exec('git clone' + url)
+  shell.exec("npm run main");
 }
 
 const writeStatusInResultsQueue = async (producer, key, statusOfJob) => {
